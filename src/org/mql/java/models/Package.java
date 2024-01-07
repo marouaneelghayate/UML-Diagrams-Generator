@@ -16,15 +16,21 @@ public class Package {
 	
 	
 	public void addClass(Class<?> cls) {
-		classes.add(cls);
+		if(cls != null)
+			classes.add(cls);
 	}
 	
 	public void addPackage(Package pkg) {
-		subPackages.add(pkg);
+		if(pkg != null)
+			subPackages.add(pkg);
 	}
 	
 	public List<Package> getSubPackages() {
 		return subPackages;
+	}
+	
+	public List<Class<?>> getClasses() {
+		return classes;
 	}
 	
 	public String getName() {

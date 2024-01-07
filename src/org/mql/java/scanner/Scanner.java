@@ -3,9 +3,7 @@ package org.mql.java.scanner;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
+
 
 import org.mql.java.models.Project;
 import org.mql.java.models.Package;
@@ -16,15 +14,16 @@ public class Scanner {
 
 	public Scanner(String root) {
 		super();
-		this.root = root + "\\bin";
+		this.root = root;
 	}
 
 
 	public Project scan() {
-		File folder = new File(root);
+		File folder = new File(root + "\\bin");
 		if(!folder.exists())
 			return null;
 		Project project = new Project(root);
+		root = root + "\\bin";
 		for(File file : folder.listFiles()) {
 			if(file.isDirectory()) {
 				project.addPackage(recursiveScan(root + "\\" + file.getName()));				
@@ -66,6 +65,7 @@ public class Scanner {
 			URL[] urls = {f.toURI().toURL()};
 			URLClassLoader urlcl = new URLClassLoader(urls);
 			Class<?> cls  = urlcl.loadClass(className);
+			//urlcl.close();
 			return cls;
 			
 		} catch (Exception e) {

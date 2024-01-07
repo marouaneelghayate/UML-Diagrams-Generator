@@ -16,6 +16,10 @@ public class Project {
 	public String toString() {
 		return "Project [projectPath=" + projectPath + ", packages=" + packages + "\n]";
 	}
+	
+	public String getProjectPath() {
+		return projectPath;
+	}
 	 
 	
 	public void print() {
@@ -26,7 +30,8 @@ public class Project {
 	}
 
 	public void addPackage(Package pkg) {
-		packages.add(pkg);
+		if(pkg != null)
+			packages.add(pkg);
 		
 	}
 	
