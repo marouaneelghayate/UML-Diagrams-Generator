@@ -3,13 +3,16 @@ package org.mql.java.models;
 import java.util.List;
 import java.util.Vector;
 
+
 public class Project {
 	private String projectPath;
 	List<Package> packages;
+	List<Association> associations;
 
 	public Project(String projectPath) {
 		this.projectPath = projectPath;
 		packages = new Vector<Package>();
+		associations  = new Vector<Association>();
 	}
 
 	@Override
@@ -35,8 +38,18 @@ public class Project {
 		
 	}
 	
+	public void addAssociation(Association a) {
+		associations.add(a);
+	}
+	
 	public List<Package> getPackages() {
 		return packages;
 	}
+	
+	
+	public List<Association> getAssociations() {
+		return associations;
+	}
+
 
 }

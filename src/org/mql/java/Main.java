@@ -1,8 +1,10 @@
 package org.mql.java;
 
-import org.mql.java.scanner.Scanner;
+import org.mql.java.scanner.ProjectScanner;
+import org.mql.java.generators.ClassGenerator;
+import org.mql.java.generators.Generator;
+import org.mql.java.generators.PackageGenerator;
 import org.mql.java.models.Project;
-import org.mql.java.parser.Transformer;
 
 public class Main {
 
@@ -10,10 +12,14 @@ public class Main {
 		init();
 	}
 	private void init() {
-		Scanner scanner = new Scanner("C:\\Users\\hp\\Documents\\MQL\\S1\\Java\\p03-Annotations and Reflection");
-		Project project = scanner.scan();
-		project.print();
-		Transformer.transform(project, "C:\\Users\\hp\\Documents\\MQL\\S1\\Java\\ElGhayate Marouane - UML Diagrams Generator\\resources\\xml\\project.xml");
+		String path ="C:\\Users\\hp\\Documents\\MQL\\S1\\Java\\ElGhayate Marouane - UML Diagrams Generator";
+		ProjectScanner projectScanner = new ProjectScanner(path);
+		Project project = projectScanner.scan();
+		Generator generator = new PackageGenerator(project, "resources/xml/package.xml");
+		generator.generate();
+		generator = new ClassGenerator(project, "resources/xml/class.xml");
+		generator.generate();
+		
 		
 	}
 	

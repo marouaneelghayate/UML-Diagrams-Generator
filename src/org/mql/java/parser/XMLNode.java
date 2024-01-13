@@ -50,7 +50,6 @@ public class XMLNode {
 	
 	private XMLNode(String source) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
-		//factory.setValidating(true);//un parseur validant pour valider le document
 		try {
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			document =  builder.parse(source);
@@ -60,7 +59,6 @@ public class XMLNode {
 				node = node.getNextSibling();
 				
 			}
-			//document.getDocumentElement(); => Element
 			setNode(node);
 			
 			
@@ -204,11 +202,16 @@ public class XMLNode {
 	
 	
 	public XMLNode getElementById(String id) {
-		Node node = document.getElementById(id);
-		if(node != null) {
-			return new XMLNode(node);
+		Node documentElement = document.getDocumentElement();
+		XMLNode doc = new XMLNode(documentElement);
+		if(((Element)documentElement).hasAttribute("id") & ((Element)documentElement).getAttribute("id").equals(id)) {
+			return new XMLNode(documentElement);
 		}
-		System.out.println("why is node null");
+		for(XMLNode child : doc.getChildren()) {
+			if(child.getAttribute("id").equals(id)) {
+				return child;
+			}
+		}
 		return null;
 	}
 

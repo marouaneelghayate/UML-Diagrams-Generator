@@ -6,18 +6,18 @@ import java.util.Vector;
 public class Package {
 	
 	private String name;
-	private List<Class<?>> classes;
+	private List<ClassWrapper> classes;
 	private List<Package> subPackages;
 	public Package(String name) {
 		this.name = name;
 		subPackages = new Vector<Package>();
-		classes = new Vector<Class<?>>();
+		classes = new Vector<ClassWrapper>();
 	}
 	
 	
-	public void addClass(Class<?> cls) {
-		if(cls != null)
-			classes.add(cls);
+	public void addClass(ClassWrapper wrapper) {
+		if(wrapper != null)
+			classes.add(wrapper);
 	}
 	
 	public void addPackage(Package pkg) {
@@ -29,7 +29,7 @@ public class Package {
 		return subPackages;
 	}
 	
-	public List<Class<?>> getClasses() {
+	public List<ClassWrapper> getClasses() {
 		return classes;
 	}
 	
@@ -51,7 +51,7 @@ public class Package {
 		for (Package pkg : subPackages) {
 			pkg.print(indent + "\t");
 		}
-		for (Class<?> cls : classes) {
+		for (ClassWrapper cls : classes) {
 			System.out.println(indent + "\tClass : " + cls);
 		}
 		
