@@ -13,11 +13,10 @@ public class SourceClassLoader {
 			@SuppressWarnings("resource")
 			URLClassLoader urlcl = new URLClassLoader(urls);
 			Class<?> cls  = urlcl.loadClass(className);
-			urlcl.close();
 			return cls;
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		return null;

@@ -8,7 +8,7 @@ import java.util.Vector;
 
 public class ClassWrapper {
 	private Class<?> cls;
-	private String name, fullName;
+	private String name, fullName, packageName;
 	private ClassWrapper superClass;
 	private List<ClassWrapper> interfaces,componants, aggregates;
 	private String type;
@@ -17,6 +17,7 @@ public class ClassWrapper {
 		super();
 		this.cls = cls;
 		name = cls.getSimpleName();
+		packageName = cls.getPackageName();
 		fullName = cls.getName();
 		interfaces = new Vector<ClassWrapper>();
 		componants = new Vector<ClassWrapper>();
@@ -51,13 +52,9 @@ public class ClassWrapper {
 	}
 
 
-	public ClassWrapper() {
-
-	}
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return cls.toString() + " aggregates : " + aggregates;
+		return cls.toString() ;
 	}
 	
 	public Field[] getFields() {
@@ -80,6 +77,10 @@ public class ClassWrapper {
 	}
 	public String getFullName() {
 		return fullName;
+	}
+	
+	public String getPackageName() {
+		return packageName;
 	}
 	
 	public List<ClassWrapper> getAggregates() {

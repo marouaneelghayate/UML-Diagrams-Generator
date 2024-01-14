@@ -2,6 +2,7 @@ package org.mql.java.parser;
 
 import java.io.File;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -16,16 +17,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-//une façade
 public class XMLNode {
 	private Node node;
-	private XMLNode children[]; //elements
-	private static Document document;
+	private XMLNode children[] = new XMLNode[0]; 
+	private String source;
+	private Document document;
 	private static XMLNode instance;
-	private static String source;
 	
 	
-	public static XMLNode getNewDeaultInstance() {
+	public static XMLNode newDefaultInstance() {
 		instance = new XMLNode();
 		return instance;
 	}
@@ -35,7 +35,6 @@ public class XMLNode {
 		try {
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			document =  builder.newDocument();
-			save();
 			
 		} catch (Exception e) {
 			System.out.println("Erreur : " + e.getMessage());
@@ -43,12 +42,7 @@ public class XMLNode {
 
 	}
 	
-	public void createRootElement(String name) {
-		node = document.createElement(name);
-		document.appendChild(node);
-	}
-	
-	private XMLNode(String source) {
+	public XMLNode(String source) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
 		try {
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -67,21 +61,9 @@ public class XMLNode {
 		}
 		
 	}
-
 	
 	public XMLNode(Node node) {
 		setNode(node);
-	}
-	
-	public static XMLNode getInstance() {
-		if(instance == null) {
-			instance =  new XMLNode(source);
-		}
-		return instance;
-	}
-	
-	public static void setSource(String src) {
-		source = src;
 	}
 	
 	public void setNode(Node node) {
@@ -101,6 +83,22 @@ public class XMLNode {
 		nodes.toArray(children);
 	}
 	
+	public void setDocumentElement(String name) {
+		node = document.createElement(name);
+		document.appendChild(node);
+	}
+	
+	
+	public XMLNode createNode(String name) {
+		Node item = document.createElement(name);
+		return new XMLNode(item);
+	}
+	
+	public void setSource(String src) {
+		source = src;
+	}
+	
+	
 	public Node getNode() {
 		return node;
 	}
@@ -109,22 +107,22 @@ public class XMLNode {
 		return children;
 	}
 	
-	public String getName() { //delegate method
+	public String getName() {
 		return node.getNodeName();
 	}
-	
-	public boolean isNamed(String name) {
-		return node.getNodeName().equals(name);
-	}
-	
+
 	public XMLNode getChild(String name) {
-		extractChildren();
 		for (XMLNode child : children) {
 			if(child.isNamed(name))
 				return child;
 		}
 		return null;
 	}
+	
+	public boolean isNamed(String name) {
+		return node.getNodeName().equals(name);
+	}
+	
 	
 	public String getValue() {
 		Node child = node.getFirstChild();
@@ -133,39 +131,49 @@ public class XMLNode {
 		return "";
 	}
 	
+	public String getAttribute(String name) {
+		return ((Element)node).getAttribute(name);
+	}
+	
 	public void setValue(String value) {
 		node.setTextContent(value);
 	}
+	
 	public void setAttribute(String name, String value) {
 		((Element)node).setAttribute(name, value);
-		if("ID".equals(name) || "id".equals(value)) {
-			((Element)node).setIdAttribute(name, true);
-		}
-	}
-	
-	
-	public String getAttribute(String name) {
-		Node att = node.getAttributes().getNamedItem(name);
-		if(att == null) return "";
-		return att.getNodeValue();
-	}
-	
-	public int getIntAttribute(String name) {
-		String s = getAttribute(name);
-		int value = 0; //valeur par defaut
-		try {
-			value = Integer.parseInt(s);
-			
-		} catch (Exception e) {
-			System.out.println("Erreur : " + e.getMessage());
-		}
-		return value;
 	}
 	
 	public void appendChild(XMLNode child) {
 		node.appendChild(child.getNode());
+		extractChildren();
 	}
 	
+
+	public XMLNode[] getNodes(String nodeName) {
+		List<XMLNode> nodes = new LinkedList<XMLNode>();
+		for (int i = 0; i < children.length; i++) {
+			if(children[i].isNamed(nodeName))
+				nodes.add(children[i]);
+		}
+		return nodes.toArray(new XMLNode[nodes.size()]);
+	}
+	
+	
+	public void removeChild(XMLNode child) {
+		node.removeChild(child.node);
+	}
+	
+	//trouver un element a partir de son (name) et  la valeur (value) de son attribut (attribute)
+	public XMLNode querySelector(String name, String attribute, String value) {
+		NodeList list = document.getElementsByTagName(name);
+		for(int i = 0; i < list.getLength(); i++ ) {
+			if(value.equals(((Element)list.item(i)).getAttribute(attribute))) {
+				return new XMLNode(list.item(i));
+			}
+		}
+		return null;
+	}
+
 	public void save() {
 		try {
 			TransformerFactory factory = TransformerFactory.newInstance();
@@ -178,41 +186,4 @@ public class XMLNode {
 		}
 		
 	}
-	
-	public XMLNode createNode(String name) {
-		Node item = document.createElement(name);
-		
-		return new XMLNode(item);
-	}
-	
-	public XMLNode[] getNodes(String nodeName) {
-		NodeList list = document.getElementsByTagName(nodeName);
-		LinkedList<XMLNode> nodes = new LinkedList<XMLNode>();
-		for (int i = 0; i < list.getLength(); i++) {
-			if(list.item(i).getNodeType() == Node.ELEMENT_NODE)
-				nodes.add(new XMLNode(list.item(i)));
-		}
-		return nodes.toArray(new XMLNode[nodes.size()]);
-	}
-	
-	
-	public void removeChild(XMLNode child) {
-		node.removeChild(child.node);
-	}
-	
-	
-	public XMLNode getElementById(String id) {
-		Node documentElement = document.getDocumentElement();
-		XMLNode doc = new XMLNode(documentElement);
-		if(((Element)documentElement).hasAttribute("id") & ((Element)documentElement).getAttribute("id").equals(id)) {
-			return new XMLNode(documentElement);
-		}
-		for(XMLNode child : doc.getChildren()) {
-			if(child.getAttribute("id").equals(id)) {
-				return child;
-			}
-		}
-		return null;
-	}
-
 }

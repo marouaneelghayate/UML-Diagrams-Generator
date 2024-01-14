@@ -15,56 +15,65 @@ public class ProjectScanner {
 	private Project project ;
 
 	public ProjectScanner(String root) {
-		super();
-		project = new Project(root);
 		this.root = root + "\\bin";
+
 	}
 
 
 	public Project scan() {
 		File folder = new File(root);
-		if(!folder.exists())
+		if(!folder.exists()) {
 			return null;
+		}
+		
+		project = new Project(root.replace("\\bin", ""));
+		
+		Package dft = null;
+		
 		for(File file : folder.listFiles()) {
 			if(file.isDirectory()) {
-				project.addPackage(recursiveScan(root + "\\" + file.getName()));				
+				project.addPackage(scanPackage(file.getAbsolutePath()));				
 			}
 			else {
-				Package dft = recursiveScan(root);
-				dft.setName("default");
-				project.addPackage(dft);
+				if(dft == null) {
+					dft = new Package("(default package)");
+				}
+				dft.addClass(getClassWrapper(file));
  			}
-			
 		}
+		
+		if(dft != null) {
+			project.addPackage(dft);
+		}
+		
 		return project;
 		
 	}
-	private Package recursiveScan(String path) {
+	private Package scanPackage(String path) {
 		File folder = new File(path);
-		if(!folder.exists())
-			return null;
 		Package pkg = new Package(folder.getName());
+		
 		for(File file : folder.listFiles()) {
 			if(file.isDirectory()) {
-				pkg.addPackage(recursiveScan(file.getAbsolutePath()));				
+				pkg.addPackage(scanPackage(file.getAbsolutePath()));				
 			}
-			else {
-				
-				String className = file.getPath().substring(root.length() + 1).replace("\\",".").replace(".class", "");
-				Class<?> cls = SourceClassLoader.loadClass(root, className);
-				extractAssociations(cls);
-				ClassWrapper wrapper = new ClassWrapper(cls);
-				wrapper.discover();
-				if(cls.getSimpleName().equals("XMLNode")) {
-					System.out.println("" + wrapper);
-				}
-				pkg.addClass(wrapper);
-				
+			else {			
+				pkg.addClass(getClassWrapper(file));
  			}
 			
 		}
 		return pkg;
 	}
+	
+	private ClassWrapper getClassWrapper(File file) {
+		String className = file.getPath().substring(root.length() + 1).replace("\\",".").replace(".class", "");
+		Class<?> cls = SourceClassLoader.loadClass(root,className);
+		extractAssociations(cls);
+		ClassWrapper wrapper = new ClassWrapper(cls);
+		wrapper.discover();
+		return wrapper;
+	}
+	
 	
 	private void extractAssociations(Class<?> cls) {
 		Class<?> parent = cls.getSuperclass();
@@ -79,10 +88,10 @@ public class ProjectScanner {
 		for(Field f : cls.getDeclaredFields()) {
 			if(!f.getType().isPrimitive()) {
 				if(f.getType().isMemberClass()) {
-					project.addAssociation(new Association("composition", f.getType().getName(), cls.getName()));
+					project.addAssociation(new Association("composition", cls.getName(), f.getType().getName()));
 				}
 				else {
-					project.addAssociation(new Association("aggregation", f.getType().getName(), cls.getName()));
+					project.addAssociation(new Association("aggregation", cls.getName(), f.getType().getName()));
 				}
 			}
 		}

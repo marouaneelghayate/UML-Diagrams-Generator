@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Vector;
 
 
-public class Project {
+public class Project implements Container{
 	private String projectPath;
 	List<Package> packages;
 	List<Association> associations;

@@ -1,8 +1,4 @@
-package org.mql.java.generators;
-
-
-import org.mql.java.models.Project;
-import org.mql.java.parser.XMLNode;
+package org.mql.java.persistance;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -10,67 +6,70 @@ import java.lang.reflect.Method;
 import org.mql.java.models.Association;
 import org.mql.java.models.ClassWrapper;
 import org.mql.java.models.Package;
+import org.mql.java.models.Project;
+import org.mql.java.parser.XMLNode;
 
-public class ClassGenerator implements Generator{
-	private static XMLNode root;
-	private Project project;
-	private String target;
+public class ProjectWriter{
+	private XMLNode root;
 
-	
-	public ClassGenerator(Project project, String target) {
-		super();
-		this.project = project;
-		this.target = target;
+	public ProjectWriter() {
 	}
 
-	public void generate() {
-		XMLNode.setSource(target);
-		root = XMLNode.getNewDeaultInstance();
-		root.createRootElement("project");
+
+	public void write(Project project, String target) {
+		root = XMLNode.newDefaultInstance();
+		root.setSource(target);
+		root.setDocumentElement("project");
 		root.setAttribute("path", project.getProjectPath());
 		for (Package pkg : project.getPackages()) {
-			discoverClasses(pkg);
+			appendPackage(pkg,root);
 		}
+		
+	
 		for(Association a : project.getAssociations()) {
 			root.appendChild(getAssociationNode(a));
 		}
+		
 		root.save();
 	}
 	
-	private void discoverClasses(Package p) {
+	private void appendPackage(Package p,XMLNode parent) {
+		XMLNode pkgNode = root.createNode("package");
+		pkgNode.setAttribute("id", p.getName());
+		parent.appendChild(pkgNode);
 		for (Package pkg : p.getSubPackages()) {
-			discoverClasses(pkg);
+			appendPackage(pkg,pkgNode);
 		}
 		for (ClassWrapper wrapper : p.getClasses()) {
-			appendClassNode(wrapper);
+			appendClass(wrapper,pkgNode);
 		}
+		
 	}
 	
 	
-	private void appendClassNode(ClassWrapper wrapper) {
+	private void appendClass(ClassWrapper wrapper,XMLNode parent) {
 		if(wrapper == null) {
 			return ;
 		}
-		XMLNode exists = root.getElementById(wrapper.getFullName());
-		if(exists != null) {
+		if(wrapper.getSuperClass() == null && parent == null) { // les classes externe n'ont ni parent ni package			
+			addExternalClass(wrapper);
 			return ;
 		}
-		appendClassNode(wrapper.getSuperClass());
+		
+		
 		XMLNode node = root.createNode(wrapper.getType());
 		node.setAttribute("id", wrapper.getFullName());
 		
+		parent.appendChild(node);
 		
 		XMLNode name = root.createNode("name");
 		name.setValue(wrapper.getName());
+		
 		node.appendChild(name);
-//		XMLNode superClass = root.createNode("super");
-//		superClass.setValue(wrapper.getSuperClass().getName());
-//		node.appendChild(superClass);
-				
+
 		for (Field f : wrapper.getFields()) {
 			XMLNode field = root.createNode("field");
 			field.setAttribute("type", f.getType().getName());
-			
 			field.setValue(f.getName());
 			node.appendChild(field);
 		}
@@ -82,19 +81,38 @@ public class ClassGenerator implements Generator{
 			node.appendChild(method);
 		}
 		
+		appendClass(wrapper.getSuperClass(), null);
+		
 		for(ClassWrapper cw : wrapper.getAggregates()) {
-
-			appendClassNode(cw);
+			appendClass(cw, null);
 		}
 		
 		for(ClassWrapper cw : wrapper.getComponants()) {
-			appendClassNode(cw);
+			appendClass(cw, null);
 		}
 		for(ClassWrapper cw : wrapper.getInterfaces()) {
-			appendClassNode(cw);
+			appendClass(cw,null);
 		}
-		root.appendChild(node);
 		
+	}
+		
+	private void addExternalClass(ClassWrapper wrapper) {
+		if(wrapper == null) {
+			return ;
+		}
+		XMLNode exists = root.querySelector(wrapper.getType(), "id", wrapper.getFullName());
+		if(exists != null) {
+			return ;
+		}
+		XMLNode packageNode = root.querySelector("package", "id", wrapper.getPackageName());
+		if(packageNode == null) {
+			packageNode = root.createNode("package");
+			packageNode.setAttribute("id", wrapper.getPackageName());
+		}
+		
+		
+		root.appendChild(packageNode);
+		appendClass(wrapper, packageNode);
 	}
 	
 	private XMLNode getAssociationNode(Association a) {
