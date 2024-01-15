@@ -1,7 +1,6 @@
 package org.mql.java.persistance;
 
 import java.io.File;
-import java.util.Iterator;
 
 import org.mql.java.models.Association;
 import org.mql.java.models.ClassWrapper;

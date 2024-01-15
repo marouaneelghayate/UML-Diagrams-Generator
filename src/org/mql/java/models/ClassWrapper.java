@@ -11,7 +11,7 @@ public class ClassWrapper {
 	private String name, fullName, packageName;
 	private ClassWrapper superClass;
 	private List<ClassWrapper> interfaces,componants, aggregates;
-	private String type;
+	private String type, scope = "external";
 
 	public ClassWrapper(Class<?> cls) {
 		super();
@@ -31,6 +31,7 @@ public class ClassWrapper {
 	}
 	
 	public void discover() {
+		scope = "internal";
 		
 		Class<?> parent = cls.getSuperclass();
 		if(parent != null) {
@@ -91,5 +92,8 @@ public class ClassWrapper {
 	}
 	public List<ClassWrapper> getInterfaces() {
 		return interfaces;
+	}
+	public String getScope() {
+		return scope;
 	}
 }
