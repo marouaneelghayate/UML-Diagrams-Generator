@@ -6,48 +6,57 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
-public class ClassWrapper {
+public class Entity {
 	private Class<?> cls;
 	private String name, fullName, packageName;
-	private ClassWrapper superClass;
-	private List<ClassWrapper> interfaces,componants, aggregates;
-	private String type, scope = "external";
+	private Entity superClass;
+	private List<Entity> interfaces, componants, aggregates;
+	public static final int INTERNAL = 0, EXTERNAL = 1;
+	private int scope;
+	private String type;
 
-	public ClassWrapper(Class<?> cls) {
-		super();
+	public Entity(Class<?> cls, boolean isLocal) {
+		this(cls);
+		if(isLocal) {
+			discover();
+		}
+	}
+	public Entity(Class<?> cls) {
 		this.cls = cls;
 		name = cls.getSimpleName();
 		packageName = cls.getPackageName();
 		fullName = cls.getName();
-		interfaces = new Vector<ClassWrapper>();
-		componants = new Vector<ClassWrapper>();
-		aggregates = new Vector<ClassWrapper>();
+		interfaces = new Vector<Entity>();
+		componants = new Vector<Entity>();
+		aggregates = new Vector<Entity>();
+		scope = EXTERNAL;
 		if(cls.isAnnotation())
 			type = "annotation";
 		else if(cls.isInterface())
 			type = "interface";
 		else
 			type = "class";
+		
 	}
 	
-	public void discover() {
-		scope = "internal";
+	private void discover() {
+		scope = INTERNAL;
 		
 		Class<?> parent = cls.getSuperclass();
 		if(parent != null) {
-			superClass = new ClassWrapper(parent);
+			superClass = new Entity(parent);
 		}
 		interfaces = Arrays.stream(cls.getInterfaces())
-			.map( item -> new ClassWrapper(item))
+			.map( item -> new Entity(item))
 			.toList();
 		
 		componants = Arrays.stream(cls.getDeclaredClasses())
-			.map( item -> new ClassWrapper(item))
+			.map( item -> new Entity(item))
 			.toList();
 		
 		aggregates = Arrays.stream(cls.getDeclaredFields())
 			.filter(item -> !item.getType().isPrimitive())
-			.map( item -> new ClassWrapper(item.getType()))
+			.map( item -> new Entity(item.getType()))
 			.toList();
 
 	}
@@ -70,7 +79,7 @@ public class ClassWrapper {
 		return type;
 	}
 
-	public ClassWrapper getSuperClass() {
+	public Entity getSuperClass() {
 		return superClass;
 	}
 	public String getName() {
@@ -84,16 +93,16 @@ public class ClassWrapper {
 		return packageName;
 	}
 	
-	public List<ClassWrapper> getAggregates() {
+	public List<Entity> getAggregates() {
 		return aggregates;
 	}
-	public List<ClassWrapper> getComponants() {
+	public List<Entity> getComponants() {
 		return componants;
 	}
-	public List<ClassWrapper> getInterfaces() {
+	public List<Entity> getInterfaces() {
 		return interfaces;
 	}
-	public String getScope() {
+	public int getScope() {
 		return scope;
 	}
 }

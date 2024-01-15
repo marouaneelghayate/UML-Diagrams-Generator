@@ -131,16 +131,29 @@ public class XMLNode {
 		return "";
 	}
 	
-	public String getAttribute(String name) {
-		return ((Element)node).getAttribute(name);
-	}
 	
 	public void setValue(String value) {
 		node.setTextContent(value);
 	}
 	
-	public void setAttribute(String name, String value) {
-		((Element)node).setAttribute(name, value);
+	public String getAttribute(String name) {
+		return ((Element)node).getAttribute(name);
+	}
+	
+	public int getIntAttribute(String name) {
+		String s = getAttribute(name);
+		int value = -1; 
+		try {
+			value = Integer.parseInt(s);
+			
+		} catch (Exception e) {
+			System.out.println("Erreur : " + e.getMessage());
+		}
+		return value;
+	}
+	
+	public void setAttribute(String name, Object value) {
+		((Element)node).setAttribute(name, "" + value);
 	}
 	
 	public void appendChild(XMLNode child) {

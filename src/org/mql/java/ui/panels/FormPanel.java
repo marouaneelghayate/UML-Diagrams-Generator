@@ -15,6 +15,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 
 import org.mql.java.models.Project;
+import org.mql.java.persistance.ProjectLoader;
+import org.mql.java.persistance.ProjectWriter;
 import org.mql.java.scanner.ProjectScanner;
 import org.mql.java.ui.componants.LabeledTextField;
 import org.mql.java.ui.dialogs.DiagramsDialog;
@@ -95,12 +97,17 @@ public class FormPanel extends JPanel implements ActionListener{
 			return;
 		}
 		
-		new DiagramsDialog();
+		new DiagramsDialog(project);
 	}
 	
 	private Project getProject(String path) {
 		ProjectScanner scanner = new ProjectScanner(path);
 		Project project = scanner.scan();
+		ProjectWriter writer = new ProjectWriter();
+		writer.write(project, "resources/xml/diagram.xml");
+		ProjectLoader loader = new ProjectLoader();
+		project = loader.load("resources/xml/diagram.xml");
+		
 		return project;
 	}
 	

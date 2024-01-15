@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 import org.mql.java.models.Project;
 import org.mql.java.util.SourceClassLoader;
 import org.mql.java.models.Association;
-import org.mql.java.models.ClassWrapper;
+import org.mql.java.models.Entity;
 import org.mql.java.models.Package;
 
 
@@ -15,7 +15,7 @@ public class ProjectScanner {
 	private Project project ;
 
 	public ProjectScanner(String root) {
-		this.root = root + "\\bin";
+		this.root = root.replace("\\\\", "/") + "/bin";
 
 	}
 
@@ -26,7 +26,7 @@ public class ProjectScanner {
 			return null;
 		}
 		
-		project = new Project(root.replace("\\bin", ""));
+		project = new Project(root.replace("/bin", ""));
 		
 		Package dft = null;
 		
@@ -65,12 +65,11 @@ public class ProjectScanner {
 		return pkg;
 	}
 	
-	private ClassWrapper getClassWrapper(File file) {
+	private Entity getClassWrapper(File file) {
 		String className = file.getPath().substring(root.length() + 1).replace("\\",".").replace(".class", "");
 		Class<?> cls = SourceClassLoader.loadClass(root,className);
 		extractAssociations(cls);
-		ClassWrapper wrapper = new ClassWrapper(cls);
-		wrapper.discover();
+		Entity wrapper = new Entity(cls, true);
 		return wrapper;
 	}
 	

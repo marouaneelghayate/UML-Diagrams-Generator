@@ -1,15 +1,13 @@
 package org.mql.java;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
 
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 
 import org.mql.java.models.Project;
 import org.mql.java.persistance.ProjectLoader;
 import org.mql.java.persistance.ProjectWriter;
 import org.mql.java.scanner.ProjectScanner;
+import org.mql.java.ui.dialogs.DiagramsDialog;
 import org.mql.java.ui.panels.FormPanel;
 
 public class Main extends JFrame{
@@ -30,8 +28,11 @@ public class Main extends JFrame{
 		setTitle("UML Diagrams Generator");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setVisible(true);
-		
+		//setVisible(true);
+		String path ="C:\\Users\\hp\\Documents\\MQL\\S1\\Java\\ElGhayate Marouane - UML Diagrams Generator";
+		ProjectScanner projectScanner = new ProjectScanner(path);
+		Project project = projectScanner.scan();
+		new DiagramsDialog(project);
 	}
 	
 	private void m1() {

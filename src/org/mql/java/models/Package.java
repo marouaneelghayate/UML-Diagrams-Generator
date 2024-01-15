@@ -6,16 +6,16 @@ import java.util.Vector;
 public class Package implements Container{
 	
 	private String name;
-	private List<ClassWrapper> classes;
+	private List<Entity> classes;
 	private List<Package> subPackages;
 	public Package(String name) {
 		this.name = name;
 		subPackages = new Vector<Package>();
-		classes = new Vector<ClassWrapper>();
+		classes = new Vector<Entity>();
 	}
 	
 	
-	public void addClass(ClassWrapper wrapper) {
+	public void addClass(Entity wrapper) {
 		if(wrapper != null)
 			classes.add(wrapper);
 	}
@@ -29,7 +29,7 @@ public class Package implements Container{
 		return subPackages;
 	}
 	
-	public List<ClassWrapper> getClasses() {
+	public List<Entity> getClasses() {
 		return classes;
 	}
 	
@@ -47,7 +47,7 @@ public class Package implements Container{
 		for (Package pkg : subPackages) {
 			pkg.print(indent + "\t");
 		}
-		for (ClassWrapper cls : classes) {
+		for (Entity cls : classes) {
 			System.out.println(indent + "\t" + cls);
 		}
 		

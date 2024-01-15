@@ -6,8 +6,8 @@ import java.util.Vector;
 
 public class Project implements Container{
 	private String projectPath;
-	List<Package> packages;
-	List<Association> associations;
+	private List<Package> packages;
+	private List<Association> associations;
 
 	public Project(String projectPath) {
 		this.projectPath = projectPath;

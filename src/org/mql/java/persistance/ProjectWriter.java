@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import org.mql.java.models.Association;
-import org.mql.java.models.ClassWrapper;
+import org.mql.java.models.Entity;
 import org.mql.java.models.Package;
 import org.mql.java.models.Project;
 import org.mql.java.parser.XMLNode;
@@ -40,14 +40,14 @@ public class ProjectWriter{
 		for (Package pkg : p.getSubPackages()) {
 			appendPackage(pkg,pkgNode);
 		}
-		for (ClassWrapper wrapper : p.getClasses()) {
+		for (Entity wrapper : p.getClasses()) {
 			appendClass(wrapper,pkgNode);
 		}
 		
 	}
 	
 	
-	private void appendClass(ClassWrapper wrapper,XMLNode parent) {
+	private void appendClass(Entity wrapper,XMLNode parent) {
 		if(wrapper == null) {
 			return ;
 		}
@@ -59,6 +59,7 @@ public class ProjectWriter{
 		
 		XMLNode node = root.createNode(wrapper.getType());
 		node.setAttribute("id", wrapper.getFullName());
+		node.setAttribute("scope", wrapper.getScope());
 		
 		parent.appendChild(node);
 		
@@ -83,20 +84,20 @@ public class ProjectWriter{
 		
 		appendClass(wrapper.getSuperClass(), null);
 		
-		for(ClassWrapper cw : wrapper.getAggregates()) {
+		for(Entity cw : wrapper.getAggregates()) {
 			appendClass(cw, null);
 		}
 		
-		for(ClassWrapper cw : wrapper.getComponants()) {
+		for(Entity cw : wrapper.getComponants()) {
 			appendClass(cw, null);
 		}
-		for(ClassWrapper cw : wrapper.getInterfaces()) {
+		for(Entity cw : wrapper.getInterfaces()) {
 			appendClass(cw,null);
 		}
 		
 	}
 		
-	private void addExternalClass(ClassWrapper wrapper) {
+	private void addExternalClass(Entity wrapper) {
 		if(wrapper == null) {
 			return ;
 		}

@@ -1,26 +1,21 @@
 package org.mql.java.ui.dialogs;
 
+
 import javax.swing.JDialog;
 
+import org.mql.java.models.Project;
 import org.mql.java.ui.panels.DiagramsPanel;
 
-public class DiagramsDialog extends JDialog implements Runnable{
+public class DiagramsDialog extends JDialog{
 	private static final long serialVersionUID = 1L;
-	private Thread runner;
 
-	public DiagramsDialog() {
-		runner = new Thread(this);
-		runner.start();
-	}
-
-	@Override
-	public void run() {
+	public DiagramsDialog(Project p) {
 		setTitle("Diagrammes UML");
-		setContentPane(new DiagramsPanel());
+		setContentPane(new DiagramsPanel(p));
 		pack();
 		setLocationRelativeTo(null);
 		setVisible(true);
-		
 	}
 
+	
 }

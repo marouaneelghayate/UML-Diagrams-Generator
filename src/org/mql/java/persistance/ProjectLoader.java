@@ -3,7 +3,7 @@ package org.mql.java.persistance;
 import java.io.File;
 
 import org.mql.java.models.Association;
-import org.mql.java.models.ClassWrapper;
+import org.mql.java.models.Entity;
 import org.mql.java.models.Container;
 import org.mql.java.models.Package;
 import org.mql.java.models.Project;
@@ -39,26 +39,37 @@ public class ProjectLoader {
 		}
 		XMLNode classes[] = parent.getNodes("class");
 		for (XMLNode classNode : classes) {
-			Class<?> cls = SourceClassLoader.loadClass(project.getProjectPath() + "\\bin", classNode.getAttribute("id"));
-			ClassWrapper wrapper = new ClassWrapper(cls);
-			((Package)c).addClass(wrapper);
+				((Package)c).addClass(getClassWrapper(classNode));
 		}
 		
 		XMLNode annotations[] = parent.getNodes("annotation");
 		for (XMLNode classNode : annotations) {
-			Class<?> cls = SourceClassLoader.loadClass(project.getProjectPath() + "\\bin", classNode.getAttribute("id"));
-			ClassWrapper wrapper = new ClassWrapper(cls);
-			((Package)c).addClass(wrapper);
+			((Package)c).addClass(getClassWrapper(classNode));
 		}
 		
 		XMLNode interfaces[] = parent.getNodes("interface");
 		for (XMLNode classNode : interfaces) {
-			Class<?> cls = SourceClassLoader.loadClass(project.getProjectPath() + "\\bin", classNode.getAttribute("id"));
-			ClassWrapper wrapper = new ClassWrapper(cls);
-			((Package)c).addClass(wrapper);
+			((Package)c).addClass(getClassWrapper(classNode));
 		}
 	}
-
+	
+	private Entity getClassWrapper(XMLNode node) {
+		int scope = node.getIntAttribute("scope");
+		Class<?> cls;
+		Entity wrapper = null;
+		if(scope == Entity.INTERNAL) {
+			cls = SourceClassLoader.loadClass(project.getProjectPath() + "/bin", node.getAttribute("id"));
+			wrapper = new Entity(cls, true);
+		}
+		else {
+			try {
+				cls = Class.forName(node.getAttribute("id"));
+				wrapper = new Entity(cls);
+			} catch (Exception e) {
+			}
+		}
+		return wrapper;
+	}
 	private void loadAssociations(Project project) {
 		XMLNode associations[] = root.getNodes("association");
 		for (XMLNode association : associations) {
