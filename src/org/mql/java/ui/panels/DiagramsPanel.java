@@ -12,7 +12,7 @@ public class DiagramsPanel extends JTabbedPane{
 
 	public DiagramsPanel(Project p) {
 		addTab("Diagramme de de Classes", new JScrollPane(new ClassPanel(p)));
-		addTab("Diagramme de Package", new JScrollPane(new PackagePanel()));
+		addTab("Diagramme de Package", new JScrollPane(new PackagePanel(p)));
 		
 	}
 	@Override

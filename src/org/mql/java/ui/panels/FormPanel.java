@@ -18,7 +18,7 @@ import org.mql.java.models.Project;
 import org.mql.java.persistance.ProjectLoader;
 import org.mql.java.persistance.ProjectWriter;
 import org.mql.java.scanner.ProjectScanner;
-import org.mql.java.ui.componants.LabeledTextField;
+import org.mql.java.ui.components.LabeledTextField;
 import org.mql.java.ui.dialogs.DiagramsDialog;
 import org.mql.java.ui.dialogs.ErrorDialog;
 
@@ -90,26 +90,24 @@ public class FormPanel extends JPanel implements ActionListener{
 		}
 		
 		label.setVisible(false);
-		
-		project = getProject(path);
+		ProjectScanner scanner = new ProjectScanner(path);
+		project = scanner.scan();
 		if(project == null) {
 			new ErrorDialog("Projet introuvable");
 			return;
 		}
-		
-		new DiagramsDialog(project);
-	}
-	
-	private Project getProject(String path) {
-		ProjectScanner scanner = new ProjectScanner(path);
-		Project project = scanner.scan();
 		ProjectWriter writer = new ProjectWriter();
 		writer.write(project, "resources/xml/diagram.xml");
 		ProjectLoader loader = new ProjectLoader();
 		project = loader.load("resources/xml/diagram.xml");
 		
-		return project;
+		
+		new DiagramsDialog(project);
 	}
+	
+	
+	
+	
 	
 	private class DirectoryFilter extends FileFilter{
 		@Override

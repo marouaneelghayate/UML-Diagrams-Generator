@@ -1,6 +1,8 @@
 package org.mql.java.ui.dialogs;
 
 
+import java.awt.Toolkit;
+
 import javax.swing.JDialog;
 
 import org.mql.java.models.Project;
@@ -13,6 +15,7 @@ public class DiagramsDialog extends JDialog{
 		setTitle("Diagrammes UML");
 		setContentPane(new DiagramsPanel(p));
 		pack();
+		setIconImage(Toolkit.getDefaultToolkit().createImage("resources/icons/logo.png"));
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}

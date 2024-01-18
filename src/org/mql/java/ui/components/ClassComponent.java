@@ -1,21 +1,18 @@
-package org.mql.java.ui.componants;
+package org.mql.java.ui.components;
 
 
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.geom.Rectangle2D;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -23,12 +20,12 @@ import javax.swing.border.LineBorder;
 
 import org.mql.java.models.Entity;
 
-public class ClassComponant extends JPanel {
+public class ClassComponent extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private Entity wrapper;
 
 
-	public ClassComponant(Entity wrapper) {
+	public ClassComponent(Entity wrapper) {
 		this.wrapper = wrapper;
 		
 		
@@ -73,6 +70,7 @@ public class ClassComponant extends JPanel {
 			fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
 			fieldsPanel.setOpaque(false);
 			for(Field f: fields) {
+
 				String labelText = getModifier(f.getModifiers()) + " " + f.getType().getSimpleName() + " : " + f.getName();
 				JLabel label = new JLabel(labelText);
 				label.setBorder(new EmptyBorder(2,0,2,0));
@@ -103,11 +101,22 @@ public class ClassComponant extends JPanel {
 	
 	private void addExternalClass() {
 		
-		JPanel namePanel = new  JPanel(new FlowLayout(FlowLayout.CENTER));
+		JPanel namePanel = new  JPanel();
+		namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.Y_AXIS));
 		namePanel.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.black),new EmptyBorder(0, 5, 0, 5)));
 		namePanel.setOpaque(false);
 
+		String type = wrapper.getType();
+		if(!"class".equals(type)) {
+			JLabel typeLabel = new JLabel("<<" + type + ">>");
+			typeLabel.setAlignmentX(CENTER_ALIGNMENT);
+			namePanel.add(typeLabel);
+			setBackground(new Color(230,243,255));
+		}
+		
+		
 		JLabel nameLabel = new JLabel(wrapper.getFullName());
+		nameLabel.setAlignmentX(CENTER_ALIGNMENT);
 		namePanel.add(nameLabel);
 		add(namePanel, BorderLayout.NORTH);
 		
@@ -118,6 +127,7 @@ public class ClassComponant extends JPanel {
 		filler.setPreferredSize(new Dimension(120,110));
 		add(filler, BorderLayout.CENTER);
 	}
+	
 	
 	
 	private String getModifier(int modifier) {

@@ -1,4 +1,4 @@
-package org.mql.java.ui.componants;
+package org.mql.java.ui.components;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;

@@ -157,6 +157,8 @@ public class XMLNode {
 	}
 	
 	public void appendChild(XMLNode child) {
+		if(child == null)
+			return;
 		node.appendChild(child.getNode());
 		extractChildren();
 	}

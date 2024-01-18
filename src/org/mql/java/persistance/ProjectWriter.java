@@ -3,7 +3,8 @@ package org.mql.java.persistance;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import org.mql.java.models.Association;
+import org.mql.java.models.EntityLink;
+import org.mql.java.models.Link;
 import org.mql.java.models.Entity;
 import org.mql.java.models.Package;
 import org.mql.java.models.Project;
@@ -25,9 +26,14 @@ public class ProjectWriter{
 			appendPackage(pkg,root);
 		}
 		
-	
-		for(Association a : project.getAssociations()) {
-			root.appendChild(getAssociationNode(a));
+		for(Entity e : project.getInternalEntities()) {
+			root.appendChild(getEntityNode(e));
+		}
+		for(Entity e : project.getExternalEntities()) {
+			root.appendChild(getEntityNode(e));
+		}
+		for(Link l : project.getEntityLinks()) {
+			root.appendChild(getLinkNode(l));
 		}
 		
 		root.save();
@@ -37,96 +43,67 @@ public class ProjectWriter{
 		XMLNode pkgNode = root.createNode("package");
 		pkgNode.setAttribute("id", p.getName());
 		parent.appendChild(pkgNode);
-		for (Package pkg : p.getSubPackages()) {
+		for (Package pkg : p.getPackages()) {
 			appendPackage(pkg,pkgNode);
 		}
-		for (Entity wrapper : p.getClasses()) {
-			appendClass(wrapper,pkgNode);
-		}
+		
 		
 	}
 	
 	
-	private void appendClass(Entity wrapper,XMLNode parent) {
-		if(wrapper == null) {
-			return ;
+	private XMLNode getEntityNode(Entity e) {
+		if(e == null) {
+			return null;
 		}
-		if(wrapper.getSuperClass() == null && parent == null) { // les classes externe n'ont ni parent ni package			
-			addExternalClass(wrapper);
-			return ;
+		XMLNode node = root.createNode(e.getType());
+		node.setAttribute("id", e.getFullName());
+		node.setAttribute("scope", e.getScope());
+		
+		if(e.getScope() == Entity.EXTERNAL) {
+			return node;
 		}
 		
-		
-		XMLNode node = root.createNode(wrapper.getType());
-		node.setAttribute("id", wrapper.getFullName());
-		node.setAttribute("scope", wrapper.getScope());
-		
-		parent.appendChild(node);
 		
 		XMLNode name = root.createNode("name");
-		name.setValue(wrapper.getName());
+		name.setValue(e.getName());
 		
 		node.appendChild(name);
 
-		for (Field f : wrapper.getFields()) {
+		for (Field f : e.getFields()) {
 			XMLNode field = root.createNode("field");
 			field.setAttribute("type", f.getType().getName());
 			field.setValue(f.getName());
 			node.appendChild(field);
 		}
 		
-		for (Method m : wrapper.getMethods()) {
+		for (Method m : e.getMethods()) {
 			XMLNode method = root.createNode("method");
 			method.setAttribute("type", m.getReturnType().getName());
 			method.setValue(m.getName() + "()");
 			node.appendChild(method);
 		}
 		
-		appendClass(wrapper.getSuperClass(), null);
-		
-		for(Entity cw : wrapper.getAggregates()) {
-			appendClass(cw, null);
-		}
-		
-		for(Entity cw : wrapper.getComponants()) {
-			appendClass(cw, null);
-		}
-		for(Entity cw : wrapper.getInterfaces()) {
-			appendClass(cw,null);
-		}
-		
-	}
-		
-	private void addExternalClass(Entity wrapper) {
-		if(wrapper == null) {
-			return ;
-		}
-		XMLNode exists = root.querySelector(wrapper.getType(), "id", wrapper.getFullName());
-		if(exists != null) {
-			return ;
-		}
-		XMLNode packageNode = root.querySelector("package", "id", wrapper.getPackageName());
-		if(packageNode == null) {
-			packageNode = root.createNode("package");
-			packageNode.setAttribute("id", wrapper.getPackageName());
-		}
-		
-		
-		root.appendChild(packageNode);
-		appendClass(wrapper, packageNode);
+		return node;
 	}
 	
-	private XMLNode getAssociationNode(Association a) {
-		XMLNode node = root.createNode("association");
-		node.setAttribute("type", a.getType());
+	
+	private XMLNode getLinkNode(Link l) {
+		XMLNode node;
+		if(l instanceof EntityLink) {			
+			node = root.createNode("entity-link");
+		}
+		else {
+			node =root.createNode("package-link");
+		}
+		node.setAttribute("type", l.getType());
 		
 		
 		XMLNode start = root.createNode("start");
-		start.setValue(a.getStart());
+		start.setValue(l.getStart());
 		
 		
 		XMLNode end = root.createNode("end");
-		end.setValue(a.getEnd());
+		end.setValue(l.getEnd());
 		
 		node.appendChild(start);
 		node.appendChild(end);

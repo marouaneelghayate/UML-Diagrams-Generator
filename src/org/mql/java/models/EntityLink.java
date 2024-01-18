@@ -1,23 +1,24 @@
 package org.mql.java.models;
 
-public class Association {
+public class EntityLink implements Link{
 
-	private String type;
+	private int type;
 	private String start;
 	private String end;
+	public static final int ASSOCIATION = 0, EXTENSION = 1, IMPLEMENTATION = 2,AGGREGATION = 3,  COMPOSITION = 4;
 
-	public Association(String type, String start, String end) {
+	public EntityLink(int type, String start, String end) {
 		super();
 		this.type = type;
 		this.start = start;
 		this.end = end;
 	}
 
-	public String getType() {
+	public int getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(int type) {
 		this.type = type;
 	}
 
