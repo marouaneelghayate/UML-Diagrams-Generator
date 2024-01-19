@@ -1,22 +1,18 @@
 package org.mql.java.ui.components;
 
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.geom.Rectangle2D;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import org.mql.java.models.Package;
 
 public class PackageComponent extends JPanel{
@@ -25,19 +21,47 @@ public class PackageComponent extends JPanel{
 	private int cols, rows, hgap = 50, vgap = 50;
 
 	public PackageComponent(Package p) {
-		
+		this.pkg = p;
+		if(p.getPackages().size() == 0) {
+			add(Box.createRigidArea(new Dimension(250,180)));
+		}
+		else {
+			//cols - rows <= 1 for square grid
+			cols = (int)Math.ceil(Math.sqrt(p.getPackages().size()));
+			rows = (int)Math.floor(Math.sqrt(p.getPackages().size()));
+			setLayout(new GridLayout(cols, rows, hgap, vgap));
+			for(Package pkg : p.getPackages()) {
+				add(new PackageComponent(pkg));
+			}
+		}
+		setBorder(new EmptyBorder(hgap, vgap, hgap, vgap));
 	}
 	
 	
 	@Override
 	protected void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D)g;
+		g2d.setFont(new Font("Segoe UI", Font.BOLD, 16));
+		FontMetrics fm = g2d.getFontMetrics();
+		Rectangle2D rect = fm.getStringBounds(pkg.getName(), g2d);
+		g2d.setStroke(new BasicStroke(2f));
+		g2d.setColor(Color.blue);
+		
+		//top rectangle
+		g2d.fillRoundRect(0, 0, (int)rect.getWidth() + 10, (int)rect.getHeight() + 10, 4, 4);
+		
+		//bottom rectangle
+		g2d.drawRoundRect(1, (int)rect.getHeight() + 10, getWidth() - 2, getHeight() - 1 - (int)rect.getHeight() - 10, 4, 4);
+		
+		//hide gap
+		g2d.drawLine(1, (int)rect.getHeight(), 1, (int)rect.getHeight() + 20);
+		
+		//draw name in center
+		g2d.setColor(Color.white);
+		g2d.drawString(pkg.getName(),5, (int)rect.getHeight());
 	}
 	
-	@Override
-	public Dimension getPreferredSize() {
-		return new Dimension(250 ,180);
-	}
+	
 	
 	
 }

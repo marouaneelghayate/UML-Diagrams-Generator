@@ -3,9 +3,7 @@ package org.mql.java.models;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Vector;
-import java.util.stream.Collector;
+
 
 public class Entity {
 	private Class<?> cls;

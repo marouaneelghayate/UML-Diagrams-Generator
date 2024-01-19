@@ -2,7 +2,7 @@ package org.mql.java.models;
 
 import java.util.List;
 import java.util.Vector;
-import java.util.stream.Collectors;
+
 
 
 public class Project implements Container{
@@ -40,29 +40,29 @@ public class Project implements Container{
 			packages.add(pkg);
 		
 	}
-	public void addInetrnalEntity(Entity e) {
+	public void addIntrnalEntity(Entity e) {
 		if(e != null) {			
 			internalEntities.add(e);
 		}
 	}
 	
-	public void addExetrnalEntity(Entity e) {
+	public void addExtrnalEntity(Entity e) {
 		if(e != null && !internalEntities.contains(e) && !externalEntities.contains(e)) {			
 			externalEntities.add(e);
 		}
 	}
 	
-	public void addEntityLink(Link l) {
-		if(l != null) {			
-			entityLinks.add(l);
+	public void addLink(Link l) {
+		if(l != null) {		
+			if(l instanceof EntityLink) {				
+				entityLinks.add(l);
+			}
+			else {
+				packageLinks.add(l);
+			}
 		}
 	}
 	
-	public void addPackageLink(Link l) {
-		if(l != null) {			
-			packageLinks.add(l);
-		}
-	}
 	
 	public List<Package> getPackages() {
 		return packages;
@@ -83,6 +83,4 @@ public class Project implements Container{
 	public List<Link> getEntityLinks() {
 		return entityLinks;
 	}
-
-
 }

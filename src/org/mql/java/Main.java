@@ -5,12 +5,6 @@ import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
-import org.mql.java.models.Project;
-import org.mql.java.persistance.ProjectLoader;
-import org.mql.java.persistance.ProjectWriter;
-import org.mql.java.scanner.ProjectScanner;
-import org.mql.java.ui.dialogs.DiagramsDialog;
-import org.mql.java.ui.dialogs.ErrorDialog;
 import org.mql.java.ui.panels.FormPanel;
 
 public class Main extends JFrame{
@@ -18,12 +12,7 @@ public class Main extends JFrame{
 
 
 	public Main() {
-		try {			
-			init();
-		}
-		catch(Exception e) {
-			new ErrorDialog(e.getMessage());
-		}
+		init();
 	}
 	private void init() {
 		setResizable(false);

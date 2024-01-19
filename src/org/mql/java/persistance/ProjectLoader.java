@@ -1,15 +1,15 @@
 package org.mql.java.persistance;
 
 import java.io.File;
+import java.util.Arrays;
 
 import org.mql.java.models.EntityLink;
-import org.mql.java.models.Link;
 import org.mql.java.models.Entity;
 import org.mql.java.models.Container;
 import org.mql.java.models.Package;
 import org.mql.java.models.PackageLink;
 import org.mql.java.models.Project;
-import org.mql.java.parser.XMLNode;
+import org.mql.java.parsers.XMLNode;
 import org.mql.java.util.SourceClassLoader;
 
 public class ProjectLoader {
@@ -44,58 +44,47 @@ public class ProjectLoader {
 	}
 	
 	private void loadEntities() {
-		XMLNode classes[] = root.getNodes("class");
-		for (XMLNode classNode : classes) {
-			addEntityNode(classNode);
-				
-		}
-		
-		XMLNode annotations[] = root.getNodes("annotation");
-		for (XMLNode classNode : annotations) {
-			addEntityNode(classNode);
-		}
-		
-		XMLNode interfaces[] = root.getNodes("interface");
-		for (XMLNode classNode : interfaces) {
-			addEntityNode(classNode);
-		}
+		Arrays.stream(root.getNodes("class")).forEach(this::addEntityNode);
+		Arrays.stream(root.getNodes("annotation")).forEach(this::addEntityNode);
+		Arrays.stream(root.getNodes("interface")).forEach(this::addEntityNode);
 	}
 	
 	private void addEntityNode(XMLNode node) {
 		int scope = node.getIntAttribute("scope");
 		if(scope == Entity.INTERNAL) {
 			Class<?> cls = SourceClassLoader.loadClass(project.getProjectPath() + "/bin", node.getAttribute("id"));
-			project.addInetrnalEntity(new Entity(cls,true));
+			project.addIntrnalEntity(new Entity(cls,true));
+			return ;
 		}
-		else {
-			try {
-				Class<? >cls = Class.forName(node.getAttribute("id"));
-				project.addExetrnalEntity(new Entity(cls));
-			} catch (Exception e) {
-			}
+		try {
+			Class<? >cls = Class.forName(node.getAttribute("id"));
+			project.addExtrnalEntity(new Entity(cls));
+		} catch (Exception e) {
 		}
+		
 	}
 	
 
 	private void loadLinks() {
-		XMLNode entityLinks[] = root.getNodes("entity-link");
-		for (XMLNode node : entityLinks) {
-			Link l = new EntityLink(
+		Arrays.stream(root.getNodes("entity-link"))
+		.map(node -> 
+			new EntityLink(
 					node.getIntAttribute("type"), 
 					node.getChild("start").getValue(), 
 					node.getChild("end").getValue()
-					);
-			project.addEntityLink(l);
-		}
+					)
+		)
+		.forEach(project::addLink);
 		
-		XMLNode packageLinks[] = root.getNodes("package-link");
-		for (XMLNode node : packageLinks) {
-			Link l = new PackageLink(
-					node.getIntAttribute("type"), 
-					node.getChild("start").getValue(), 
-					node.getChild("end").getValue()
-					);
-			project.addEntityLink(l);
-		}
+		Arrays.stream(root.getNodes("package-link"))
+		.map(node -> 
+			new PackageLink(
+				node.getIntAttribute("type"), 
+				node.getChild("start").getValue(), 
+				node.getChild("end").getValue()
+			)
+		)
+		.forEach(project::addLink);;
+		
 	}
 }

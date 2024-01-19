@@ -2,7 +2,6 @@ package org.mql.java.ui.panels;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -12,7 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
 
 import org.mql.java.models.Project;
 import org.mql.java.persistance.ProjectLoader;
@@ -63,7 +61,6 @@ public class FormPanel extends JPanel implements ActionListener{
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		Project project = null;
 		String path = "";
 		if(e.getSource().equals(generate)) {				
 			path = labeledTextField.getTextField().getText();
@@ -74,7 +71,6 @@ public class FormPanel extends JPanel implements ActionListener{
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			fileChooser.setApproveButtonText("choisir");
 			fileChooser.setDialogTitle("choisir un dossier");
-			fileChooser.setFileFilter(new DirectoryFilter());
 			int val = fileChooser.showOpenDialog(FormPanel.this);
 			if(val == JFileChooser.APPROVE_OPTION) {
 				path = fileChooser.getSelectedFile().getAbsolutePath();
@@ -86,12 +82,13 @@ public class FormPanel extends JPanel implements ActionListener{
 			label.setVisible(true);
 			JFrame frame = (JFrame)SwingUtilities.getWindowAncestor(this);
 			frame.pack();
-			return ;
+			return;
 		}
 		
 		label.setVisible(false);
 		ProjectScanner scanner = new ProjectScanner(path);
-		project = scanner.scan();
+		Project project = scanner.scan();
+		
 		if(project == null) {
 			new ErrorDialog("Projet introuvable");
 			return;
@@ -101,28 +98,8 @@ public class FormPanel extends JPanel implements ActionListener{
 		ProjectLoader loader = new ProjectLoader();
 		project = loader.load("resources/xml/diagram.xml");
 		
-		
 		new DiagramsDialog(project);
-	}
-	
-	
-	
-	
-	
-	private class DirectoryFilter extends FileFilter{
-		@Override
-		public String getDescription() {
-			return "Directories";
-		}
-		
-		@Override
-		public boolean accept(File f) {
-			return f.isDirectory();
-		}
 		
 	}
 	
-
-	
-
 }
