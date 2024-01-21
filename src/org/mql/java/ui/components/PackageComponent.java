@@ -8,11 +8,11 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.Box;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import org.mql.java.models.Package;
 
 public class PackageComponent extends JPanel{
@@ -27,31 +27,36 @@ public class PackageComponent extends JPanel{
 		}
 		else {
 			//cols - rows <= 1 for square grid
-			cols = (int)Math.ceil(Math.sqrt(p.getPackages().size()));
-			rows = (int)Math.floor(Math.sqrt(p.getPackages().size()));
-			setLayout(new GridLayout(cols, rows, hgap, vgap));
+			cols = (int)Math.floor(Math.sqrt(p.getPackages().size()));
+			rows = (int)Math.ceil(Math.sqrt(p.getPackages().size()));
+			
+			setLayout(new GridLayout(rows, cols, hgap, vgap));
 			for(Package pkg : p.getPackages()) {
 				add(new PackageComponent(pkg));
 			}
 		}
-		setBorder(new EmptyBorder(hgap, vgap, hgap, vgap));
+		setOpaque(false);
 	}
 	
 	
 	@Override
 	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D)g;
-		g2d.setFont(new Font("Segoe UI", Font.BOLD, 16));
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setFont(new Font("Arial", Font.BOLD, 16));
 		FontMetrics fm = g2d.getFontMetrics();
 		Rectangle2D rect = fm.getStringBounds(pkg.getName(), g2d);
 		g2d.setStroke(new BasicStroke(2f));
-		g2d.setColor(Color.blue);
+		g2d.setColor(new Color(45, 88, 134)); //grey - blue
 		
 		//top rectangle
-		g2d.fillRoundRect(0, 0, (int)rect.getWidth() + 10, (int)rect.getHeight() + 10, 4, 4);
+		g2d.fillRoundRect(0, 0, (int)rect.getWidth() + 10, (int)rect.getHeight() + 10, 5, 5);
+		//g2d.drawRoundRect(1, 1, (int)rect.getWidth() + 10, (int)rect.getHeight() + 10, 4, 4);
 		
 		//bottom rectangle
-		g2d.drawRoundRect(1, (int)rect.getHeight() + 10, getWidth() - 2, getHeight() - 1 - (int)rect.getHeight() - 10, 4, 4);
+		g2d.drawRoundRect(1, (int)rect.getHeight() + 10, getWidth() - 3, getHeight() - (int)rect.getHeight() - 10 - 2, 4, 4);
 		
 		//hide gap
 		g2d.drawLine(1, (int)rect.getHeight(), 1, (int)rect.getHeight() + 20);

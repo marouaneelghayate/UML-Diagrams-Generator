@@ -4,7 +4,6 @@ package org.mql.java.ui.components;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -91,7 +90,6 @@ public class ClassComponent extends JPanel {
 		add(classBody, BorderLayout.SOUTH);
 		
 	}
-	
 	
 	
 	private String getModifier(int modifier) {

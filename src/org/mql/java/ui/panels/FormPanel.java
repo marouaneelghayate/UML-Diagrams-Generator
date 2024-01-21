@@ -17,8 +17,8 @@ import org.mql.java.persistance.ProjectLoader;
 import org.mql.java.persistance.ProjectWriter;
 import org.mql.java.scanner.ProjectScanner;
 import org.mql.java.ui.components.LabeledTextField;
-import org.mql.java.ui.dialogs.DiagramsDialog;
-import org.mql.java.ui.dialogs.ErrorDialog;
+import org.mql.java.ui.windows.DiagramsFrame;
+import org.mql.java.ui.windows.ErrorDialog;
 
 public class FormPanel extends JPanel implements ActionListener{
 	private static final long serialVersionUID = 1L;
@@ -61,7 +61,7 @@ public class FormPanel extends JPanel implements ActionListener{
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		String path = "";
+		String path = labeledTextField.getTextField().getText();
 		if(e.getSource().equals(generate)) {				
 			path = labeledTextField.getTextField().getText();
 			
@@ -98,7 +98,7 @@ public class FormPanel extends JPanel implements ActionListener{
 		ProjectLoader loader = new ProjectLoader();
 		project = loader.load("resources/xml/diagram.xml");
 		
-		new DiagramsDialog(project);
+		new DiagramsFrame(project);
 		
 	}
 	

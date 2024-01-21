@@ -3,7 +3,7 @@ package org.mql.java.parsers;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.mql.java.ui.dialogs.ErrorDialog;
+import org.mql.java.ui.windows.ErrorDialog;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

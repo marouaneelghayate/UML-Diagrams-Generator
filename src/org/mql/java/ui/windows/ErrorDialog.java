@@ -1,4 +1,4 @@
-package org.mql.java.ui.dialogs;
+package org.mql.java.ui.windows;
 
 import javax.swing.JDialog;
 
