@@ -44,8 +44,6 @@ public class PackagePanel extends JPanel implements Diagram{
 			add(new PackageComponent(p));
 		}
 	}
-	
-
 	public void export(String path) {
 		BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = image.createGraphics();

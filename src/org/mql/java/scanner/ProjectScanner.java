@@ -2,6 +2,7 @@ package org.mql.java.scanner;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 import org.mql.java.models.Project;
 import org.mql.java.util.SourceClassLoader;
@@ -27,15 +28,24 @@ public class ProjectScanner {
 		if(!folder.exists()) 
 			return null;
 		
-		
 		project = new Project(root.replace("/bin", ""));
+		
+//		Arrays.stream(folder.listFiles())
+//			.filter(file -> file.isDirectory())
+//			.map(this::scanPackage)
+//			.forEach(project::addPackage);
+//		
+//		Arrays.stream(folder.listFiles())
+//			.filter(file -> !file.isDirectory())
+//			.map(this::getEntity)
+//			.forEach(project::addInternalEntity);
 		
 		for(File file : folder.listFiles()) {
 			if(file.isDirectory()) {
-				project.addPackage(scanPackage(file.getAbsolutePath()));				
+				project.addPackage(scanPackage(file));				
 			}
 			else {
-				project.addIntrnalEntity(getEntity(file));
+				project.addInternalEntity(getEntity(file));
  			}
 		}
 		
@@ -46,16 +56,15 @@ public class ProjectScanner {
 		return project;
 		
 	}
-	private Package scanPackage(String path) {
-		File folder = new File(path);
+	private Package scanPackage(File folder) {
 		Package pkg = new Package(folder.getName());
 		
 		for(File file : folder.listFiles()) {
 			if(file.isDirectory()) {
-				pkg.addPackage(scanPackage(file.getAbsolutePath()));				
+				pkg.addPackage(scanPackage(file));				
 			}
 			else {			
-				project.addIntrnalEntity(getEntity(file));
+				project.addInternalEntity(getEntity(file));
  			}
 			
 		}

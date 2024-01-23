@@ -3,7 +3,7 @@ package org.mql.java.ui.panels;
 
 import javax.swing.JTextArea;
 
-import org.mql.java.parsers.SAXLoader;
+import org.mql.java.parsers.SAXFormatter;
 
 public class XMLArea extends JTextArea{
 	private static final long serialVersionUID = 1L;
@@ -15,7 +15,7 @@ public class XMLArea extends JTextArea{
 	}
 
 	private void writeFormattedXML() {
-		SAXLoader loader = new SAXLoader("resources/xml/diagram.xml");
+		SAXFormatter loader = new SAXFormatter("resources/xml/diagram.xml");
 		String formatted = loader.getFormattedString();
 		setText(formatted);
 	}

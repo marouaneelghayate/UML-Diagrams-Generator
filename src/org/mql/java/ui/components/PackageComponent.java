@@ -53,7 +53,6 @@ public class PackageComponent extends JPanel{
 		
 		//top rectangle
 		g2d.fillRoundRect(0, 0, (int)rect.getWidth() + 10, (int)rect.getHeight() + 10, 5, 5);
-		//g2d.drawRoundRect(1, 1, (int)rect.getWidth() + 10, (int)rect.getHeight() + 10, 4, 4);
 		
 		//bottom rectangle
 		g2d.drawRoundRect(1, (int)rect.getHeight() + 10, getWidth() - 3, getHeight() - (int)rect.getHeight() - 10 - 2, 4, 4);

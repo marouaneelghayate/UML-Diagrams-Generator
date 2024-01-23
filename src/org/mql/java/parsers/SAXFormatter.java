@@ -8,12 +8,12 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class SAXLoader extends DefaultHandler{
+public class SAXFormatter extends DefaultHandler{
 
 	private String formatted = "";
 	private String indent = "";
 	
-	public SAXLoader(String path) {
+	public SAXFormatter(String path) {
 		SAXParserFactory factory = SAXParserFactory.newDefaultInstance();
 		try {
 			SAXParser parser = factory.newSAXParser();
@@ -49,7 +49,6 @@ public class SAXLoader extends DefaultHandler{
 	
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
-	
 		String str =indent +  new String(ch, start, length) + "\n";
 		formatted += str;
 	}

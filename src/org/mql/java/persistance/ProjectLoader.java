@@ -32,8 +32,8 @@ public class ProjectLoader {
 		return project;
 	}
 	
-	private void loadPackages(XMLNode parent, Container c) {
-		XMLNode packages[] = parent.getNodes("package");
+	private void loadPackages(XMLNode current, Container c) {
+		XMLNode packages[] = current.getNodes("package");
 		for (XMLNode pkgNode : packages) {
 			Package p = new Package(pkgNode.getAttribute("id"));
 			c.addPackage(p);
@@ -53,7 +53,7 @@ public class ProjectLoader {
 		int scope = node.getIntAttribute("scope");
 		if(scope == Entity.INTERNAL) {
 			Class<?> cls = SourceClassLoader.loadClass(project.getProjectPath() + "/bin", node.getAttribute("id"));
-			project.addIntrnalEntity(new Entity(cls,true));
+			project.addInternalEntity(new Entity(cls,true));
 			return ;
 		}
 		try {

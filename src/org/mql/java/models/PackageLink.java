@@ -17,23 +17,12 @@ public class PackageLink implements Link{
 		return type;
 	}
 
-	public void setType(int type) {
-		this.type = type;
-	}
-
 	public String getStart() {
 		return start;
-	}
-
-	public void setStart(String start) {
-		this.start = start;
 	}
 
 	public String getEnd() {
 		return end;
 	}
 
-	public void setEnd(String end) {
-		this.end = end;
-	}
 }

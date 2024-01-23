@@ -68,7 +68,6 @@ public class XMLNode {
 		LinkedList<XMLNode> nodes = new LinkedList<XMLNode>();
 		for (int i = 0; i < list.getLength(); i++) {
 			if(list.item(i).getNodeType() == Node.ELEMENT_NODE)
-				//System.out.println(list.item(i).getNodeName());
 				nodes.add(new XMLNode(list.item(i)));
 		}
 		children = new XMLNode[nodes.size()];
@@ -78,6 +77,7 @@ public class XMLNode {
 	public void setDocumentElement(String name) {
 		node = document.createElement(name);
 		document.appendChild(node);
+		
 	}
 	
 	
@@ -135,7 +135,7 @@ public class XMLNode {
 	
 	public int getIntAttribute(String name) {
 		String s = getAttribute(name);
-		int value = -1; 
+		int value = 0; 
 		try {
 			value = Integer.parseInt(s);
 			
@@ -149,10 +149,8 @@ public class XMLNode {
 	}
 	
 	public void appendChild(XMLNode child) {
-		if(child == null)
-			return;
-		node.appendChild(child.getNode());
-		
+		if(child != null)
+			node.appendChild(child.getNode());
 	}
 	
 
@@ -162,7 +160,7 @@ public class XMLNode {
 			if(children[i].isNamed(nodeName))
 				nodes.add(children[i]);
 		}
-		return nodes.toArray(new XMLNode[nodes.size()]);
+		return nodes.toArray(XMLNode[]::new);
 	}
 	
 	

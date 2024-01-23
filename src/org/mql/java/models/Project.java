@@ -40,7 +40,7 @@ public class Project implements Container{
 			packages.add(pkg);
 		
 	}
-	public void addIntrnalEntity(Entity e) {
+	public void addInternalEntity(Entity e) {
 		if(e != null) {			
 			internalEntities.add(e);
 		}
