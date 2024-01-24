@@ -13,6 +13,8 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.Box;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
 import org.mql.java.models.Package;
 
 public class PackageComponent extends JPanel{
@@ -22,6 +24,7 @@ public class PackageComponent extends JPanel{
 
 	public PackageComponent(Package p) {
 		this.pkg = p;
+		setBorder(new EmptyBorder(50, 50, 50, 50));
 		if(p.getPackages().size() == 0) {
 			add(Box.createRigidArea(new Dimension(250,180)));
 		}

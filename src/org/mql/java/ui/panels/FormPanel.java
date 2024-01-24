@@ -62,15 +62,11 @@ public class FormPanel extends JPanel implements ActionListener{
 	
 	public void actionPerformed(ActionEvent e) {
 		String path = labeledTextField.getTextField().getText();
-		if(e.getSource().equals(generate)) {				
-			path = labeledTextField.getTextField().getText();
-			
-		}
-		else {
+		if(e.getSource().equals(choose)) {
 			JFileChooser fileChooser = new JFileChooser();
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			fileChooser.setApproveButtonText("choisir");
-			fileChooser.setDialogTitle("choisir un dossier");
+			fileChooser.setApproveButtonText("Selectionner");
+			fileChooser.setDialogTitle("Selectionner un dossier");
 			int val = fileChooser.showOpenDialog(FormPanel.this);
 			if(val == JFileChooser.APPROVE_OPTION) {
 				path = fileChooser.getSelectedFile().getAbsolutePath();
@@ -99,6 +95,12 @@ public class FormPanel extends JPanel implements ActionListener{
 		project = loader.load("resources/xml/diagram.xml");
 		
 		new DiagramsFrame(project);
+		
+		if(project == null) {
+			System.out.println("projet introuvable ");
+			return ; 
+		}
+		
 		
 	}
 	

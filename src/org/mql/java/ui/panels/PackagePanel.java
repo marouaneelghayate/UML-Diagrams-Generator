@@ -36,10 +36,10 @@ public class PackagePanel extends JPanel implements Diagram{
 		setBorder(new EmptyBorder(20, 20, 20, 20));
 		setBackground(Color.white);
 		setOpaque(true);
-		addComponants(project);
+		addComponents(project);
 	}
 	
-	private void addComponants(Container c) {
+	private void addComponents(Container c) {
 		for(Package p: c.getPackages()) {
 			add(new PackageComponent(p));
 		}

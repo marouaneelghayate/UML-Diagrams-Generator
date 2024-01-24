@@ -60,10 +60,10 @@ public class ClassPanel extends JPanel implements Diagram{
 		
 
 		
-		addComponants();
+		addComponents();
 	}
 	
-	private void addComponants() {
+	private void addComponents() {
 		//add entities
 		for(Entity wrapper : project.getInternalEntities()) {
 			JPanel panel = new JPanel();
@@ -113,7 +113,6 @@ public class ClassPanel extends JPanel implements Diagram{
 		int endKey = mappings.get(l.getEnd());
 		
 		//mix colors of start and end entity
-		//g2d.setColor(colors.get(((int)(Math.random()*Math.abs(endKey - startKey))) + Math.min(startKey, endKey)));
 		Color c = new Color(colors.get(startKey).getRGB() + colors.get(endKey).getRGB());
 		g2d.setColor(c);
 		
@@ -142,14 +141,7 @@ public class ClassPanel extends JPanel implements Diagram{
 			g2d.setStroke(new BasicStroke(1.5f));
 		}
 		
-		drawLink(
-				new Point(x1, y1), 
-				new Point(x2, y2), 
-				startPanel, 
-				endPanel,
-				l,
-				g2d
-				);
+		drawLink(new Point(x1, y1), new Point(x2, y2), startPanel, endPanel, l, g2d);
 		
 		
 	}
@@ -159,11 +151,8 @@ public class ClassPanel extends JPanel implements Diagram{
 		int dx = start.x - end.x;
 		int dy = start.y - end.y;
 		
-		//offset each Link to reduce overlay
+		//offset each Link to reduce overlay 
 		int randomOffset = g2d.getColor().getRGB()%25;
-		if(randomOffset%2 == 0) {
-			randomOffset = -randomOffset;
-		}
 		
 		//which direction is the steepest
 		if(Math.abs(dx) >= Math.abs(dy)) {
@@ -239,7 +228,7 @@ public class ClassPanel extends JPanel implements Diagram{
 			
 			Point p = new Point(end.x, pointery);
 			drawPointer(p, dx, dy, l, g2d);
-			//if entites are vertically adjacent
+			//if entities are vertically adjacent
 			if(start.y == end.y) {								
 				g2d.drawLine(start.x, start.y, end.x, end.y);
 				return ;
@@ -269,17 +258,21 @@ public class ClassPanel extends JPanel implements Diagram{
 	private void drawPointer(Point p, int dx, int dy, Link l, Graphics2D g2d) {
 		int xUnit = 1;
 		int yUnit = 1;
+		//link from entity to itself goes from left to right 
 		if(dx == 0 && dy==0) {
 			dx = 1;
 		}
+		//find out the direction of the pointer 
 		if(dx != 0) {
 			xUnit = dx/Math.abs(dx);
 		}
 		if(dy != 0) {
 			yUnit = dy/Math.abs(dy);
 		}
+		//Pointer should be drawn horizontally
 		if(Math.abs(dx) > Math.abs(dy)) {		
 			if(l.getType() == EntityLink.IMPLEMENTATION) {
+				//draw lines in specified directions
 				g2d.drawLine(p.x,  p.y, p.x + xUnit*10,p.y + yUnit*10);
 				g2d.drawLine(p.x,  p.y, p.x + xUnit*10,p.y - yUnit*10);
 			}
@@ -287,8 +280,8 @@ public class ClassPanel extends JPanel implements Diagram{
 				int x[] = {p.x, p.x + xUnit*10, p.x + xUnit*10};
 				int y[] = {p.y, p.y + yUnit*10, p.y - yUnit*10};
 				Color c = g2d.getColor();
-				g2d.drawPolygon(x,y,3); //draw triangle outline
-				g2d.setColor(new Color(255,255,230)); //Yellow triangle for extension
+				g2d.drawPolygon(x, y, 3); //draw triangle outline
+				g2d.setColor(new Color(255, 255, 230)); //Yellow triangle for extension
 				g2d.fillPolygon(x, y, 3);
 				g2d.setColor(c);
 			}
@@ -307,6 +300,7 @@ public class ClassPanel extends JPanel implements Diagram{
 				g2d.setColor(c);
 			}
 		}
+		//Pointer should be drawn vertically
 		else {
 			if(l.getType() == EntityLink.IMPLEMENTATION) {
 				g2d.drawLine(p.x,  p.y, p.x + xUnit*10,p.y + yUnit*10);
@@ -368,11 +362,12 @@ public class ClassPanel extends JPanel implements Diagram{
 		
 		return new Point(x,start.y);
 	}
-	
+	//find path through grid of intersection points to avoid other entities
 	private void drawPath(Point start, Point end, Graphics2D g2d) {
 		int dx = start.x - end.x ;
 		int dy = start.y - end.y;
 		while(!start.equals(end)) {
+			//go vertically or horizontally 
 			if(Math.abs(dx) > Math.abs(dy)) {
 				int x = colWidth;
 				if(dx >= 0) {

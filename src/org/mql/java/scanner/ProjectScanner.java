@@ -73,6 +73,7 @@ public class ProjectScanner {
 	
 	
 	private Entity getEntity(File file) {
+		//fully qualified name
 		String className = file.getPath().substring(root.length() + 1).replace("\\",".").replace(".class", "");
 		Class<?> cls = SourceClassLoader.loadClass(root,className);
 		Entity wrapper = new Entity(cls, true);
@@ -96,7 +97,6 @@ public class ProjectScanner {
 			project.addLink(new	EntityLink(EntityLink.IMPLEMENTATION, cls.getName(),i.getName()));
 			project.addExtrnalEntity(new Entity(i));
 		}
-		
 		for(Field f : cls.getDeclaredFields()) {
 			if(!f.getType().isPrimitive()) {
 				if(f.getType().isMemberClass()) {

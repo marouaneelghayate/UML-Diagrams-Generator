@@ -4,6 +4,7 @@ package org.mql.java;
 import java.awt.Toolkit;
 import java.util.Scanner;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import org.mql.java.models.Project;
@@ -16,9 +17,10 @@ public class Main extends JFrame{
 	private static final long serialVersionUID = 1L;
 
 
+
 	public Main() {
-		testing();
-//		init();
+		//testing();
+		init();
 	}
 	
 	private void init() {

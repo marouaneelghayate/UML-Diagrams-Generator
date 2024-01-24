@@ -15,7 +15,6 @@ public class ImagePanel extends JPanel{
 	
 	public ImagePanel(String path) {
 		icon = new ImageIcon(path);
-		setOpaque(false);
 	}
 	
 	@Override
